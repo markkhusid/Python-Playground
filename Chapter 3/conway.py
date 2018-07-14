@@ -81,15 +81,23 @@ def main():
     # set up the animation
     fig, ax = plt.subplots()
     img = ax.imshow(grid, interpolation='nearest')
+    # I changed the number of frames from 10 to 100 in the next line.
     ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, ),
-                                  frames = 10,
+                                  frames = 100,
                                   interval = updateInterval,
                                   save_count = 50)
     
     # number of frames?
     # set the output file
+    # I added the next two lines to get script to work.
+    Writer = animation.writers['ffmpeg']
+    writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+
     if args.movfile:
-        ani.save(args.movfile, fps=30, extra_args=['-vcoded', 'libx264'])
+        # The line below is from the book, and seems to be causing file I/O errors
+        #ani.save(args.movfile, fps=30, extra_args=['-vcoded', 'libx264'])
+	# I replaced the line above with the one below to get the script to work.
+        ani.save(args.movfile, writer=writer)
     plt.show()
     
 # call main
