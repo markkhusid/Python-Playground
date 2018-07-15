@@ -2,6 +2,13 @@ import sys, os
 import time, random
 import wave, argparse, pygame
 import numpy as np
+
+# I added the next two lines.  TkAgg uses the Tkinter rederer, which seems to work on my system.
+# You may need to try other renderers to get the plot drawing to work
+import matplotlib
+matplotlib.use('TkAgg')
+
+
 from collections import deque
 from matplotlib import pyplot as plt
 
@@ -12,7 +19,19 @@ gShowPlot = False
 # piano C4-E(b)-F-G-B(b)-C5
 pmNotes = {'C4': 262, 'Eb': 311, 'F': 349, 'G': 391, 'Bb': 466}
 
-
+def writeWAVE(fname, data):
+    # open file
+    file = wave.open(fname, 'wb')
+    # WAV file parameters
+    nChannels = 1
+    sampleWidth = 2
+    frameRate = 44100
+    nFrames = 44100
+    # set parameters
+    file.setparams((nChannels, sampleWidth, frameRate, nFrames, 'NONE', 'noncompressed'))
+    file.writeframes(data)
+    file.close
+    
 # generate note of given frequency
 def generateNote(freq):
     nSamples = 44100
@@ -30,7 +49,7 @@ def generateNote(freq):
     samples = np.array([0]*nSamples, 'float32')
     for i in range(nSamples):
         samples[i] = buf[0]
-        avg = 0.996 * 0.5 * (buf[0] + buf[1])
+        avg = 0.995 * 0.5 * (buf[0] + buf[1])
         buf.append(avg)
         buf.popleft()
         # plot if flag set
@@ -43,19 +62,6 @@ def generateNote(freq):
     # the maximum value is 32767 for 16-bit
     samples = np.array(samples*32767, 'int16')
     return samples.tostring()
-
-def writeWAVE(fname, data):
-    # open file
-    file = wave.open(fname, 'wb')
-    # WAV file parameters
-    nChannels = 1
-    sampleWidth = 2
-    frameRate = 44100
-    nFrames = 44100
-    # set parameters
-    file.setparams((nChannels, sampleWidth, frameRate, nFrames, 'NONE', 'noncompressed'))
-    file.writeframes(data)
-    file.close
     
 # play a WAV file
 class NotePlayer:
@@ -95,6 +101,11 @@ def main():
     parser.add_argument('--piano', action='store_true', required=False)
     args = parser.parse_args()
     
+    # I added the next line to start the Python debugger, so that I can step through the script
+    # and prevent the plot from flashing on and off.
+    # By stepping through the script until just before the end, the plot stays up.
+    import pdb; pdb.set_trace()
+    
     # show plot if flag set
     if args.display:
         gShowPlot = True
@@ -120,6 +131,8 @@ def main():
         if args.display:
             nplayer.play(name + '.wav')
             time.sleep(0.5)
+                
+    
     
     # play a random tune
     if args.play:
