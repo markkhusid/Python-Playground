@@ -21,6 +21,11 @@ def generateNote(freq):
     
     # initialize ring buffer
     buf = deque([random.random() - 0.5 for i in range(N)])
+    
+    # plot if flag set
+    if gShowPlot:
+        axline, = plt.plot(buf)
+    
     # initialize sample buffer
     samples = np.array([0]*nSamples, 'float32')
     for i in range(nSamples):
@@ -28,6 +33,11 @@ def generateNote(freq):
         avg = 0.996 * 0.5 * (buf[0] + buf[1])
         buf.append(avg)
         buf.popleft()
+        # plot if flag set
+        if gShowPlot:
+            if i % 1000 == 0:
+                axline.set_ydata(buf)
+                plt.draw()
         
     # convert samples to 16-bit values and then to a string
     # the maximum value is 32767 for 16-bit
