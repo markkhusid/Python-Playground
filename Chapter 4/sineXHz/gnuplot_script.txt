@@ -1,0 +1,13 @@
+set term wxt 0
+set xrange [1200:1400]
+set title "DFFT Magnitude of 220Hz Sine Wave"
+set xlabel "Frequency [Hz]"
+set ylabel "Arbitrary Units [Arb]"
+plot "DFFT_mag_file.dat" using 1 with lines
+
+set term wxt 1
+set xrange [1200:1400]
+set title "DFFT Phase of 220Hz Sine Wave"
+set xlabel "Frequency [Hz]"
+set ylabel "Phase [degrees]"
+#plot "DFFT_phase_file.dat" using 1 with lines
