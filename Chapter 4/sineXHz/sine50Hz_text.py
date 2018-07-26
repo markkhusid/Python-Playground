@@ -60,4 +60,7 @@ datFile.close()
 # Plot sine values to observe operation
 print 'Plotting data...'
 plt.plot(vals)
+plt.title('Sine Wave 50Hz Sampled at 44100Hz for 10 Periods')
+plt.ylabel('Amplitude [Arbitrary Units]')
+plt.xlabel('Samples [Arbitrary Units]')
 plt.show()

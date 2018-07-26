@@ -392,9 +392,11 @@ end program module_test
 ! DFFT from Processed Data File
 ! Written by Mark Khusid 2015
 !
+! 2018
 ! Version 5
 ! Commented out debug code and rearranged some inconsequential lines.
 !
+! 2015
 ! Version 4
 ! Numerous fixes.  Changed code to allocate memory based on the next power of 2 relative
 ! to the number of element in the input file.  For example, a data file with 1000 data elements
