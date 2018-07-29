@@ -1,6 +1,6 @@
 set term wxt 0
-set xrange [0:200]
-set yrange [0:15]
+set xrange [20:120]
+set yrange [0:12]
 set title "DFFT Magnitude of 2 Sine Waves"
 set xlabel "Frequency [Hz]"
 set ylabel "Arbitrary Units [Arb]"
