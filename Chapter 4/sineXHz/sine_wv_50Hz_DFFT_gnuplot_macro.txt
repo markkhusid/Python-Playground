@@ -1,0 +1,7 @@
+set term wxt 0
+set xrange [40:60]
+set yrange [0:10]
+set title "DFFT Magnitude of 50Hz Sine Wave"
+set xlabel "Frequency [Hz]"
+set ylabel "Arbitrary Units [Arb]"
+plot "DFFT_mag_50Hz.dat" using 2:1 with lines

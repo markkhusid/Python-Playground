@@ -7,6 +7,8 @@
 ! Cleaned up indentation and formatting.
 ! Modified the write_DFFT_to_file subroutine to output not only the DFFT data element but also the corrected frequency
 ! on each line of the data file.  The DFFT data element and corrected frequency are separated by a space
+! Obtained the corrected frequency based on the sampe rate and the next power of two of the total number of samples (i.e. 100 samples -> next power of 2 = 128.)
+! Since there are num_bins_int number of data elements in FFT array, and the FFT array is symmetric, we divide the magnitude by half the num_bins_int to get the normalized magnitude.
 !
 ! Version 5
 ! Commented out debug code and rearranged some inconsequential lines.
@@ -395,7 +397,8 @@ module MKDynamics_FFT
             !write (*, '(a, f30.20)'), 'The value of imag_float is ->', imag_float
             
             ! Obtain the corrected frequency based on the sampe rate and the next power of two of the total number of samples (i.e. 100 samples -> next power of 2 = 128.)
-            corrected_frequency = floor(float(i) * (float(sample_rate)/float(num_bins_int_pow2)))
+            !corrected_frequency = floor(float(i) * (float(sample_rate)/float(num_bins_int_pow2)))
+            corrected_frequency = (float(i) * (float(sample_rate)/float(num_bins_int_pow2)))
             
             ! Since there are num_bins_int number of data elements in FFT array, and the FFT array is symmetric, we divide the magnitude by half the num_bins_int to get the normalized magnitude.
             magnitude = (sqrt((real_float**2) + (imag_float**2)))/float(num_bins_int/2)
@@ -478,7 +481,7 @@ program module_test
   use MKDynamics_FFT
   implicit none
   
-  print *, 'MKDyanmics_FFT Program Version 5.'
+  print *, 'MKDyanmics_FFT Program Version 6.'
 
   call get_args
   call open_files
