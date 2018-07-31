@@ -1,6 +1,10 @@
 import sys, argparse
 import math
 import numpy as np
+
+import matplotlib
+matplotlib.use('TkAgg')
+
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from scipy.spatial.distance import squareform, pdist, cdist
