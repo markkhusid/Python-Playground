@@ -1,0 +1,16 @@
+set term wxt 0
+set xrange [20:120]
+set yrange [0:12]
+set title "2 Sine Waves Freq Domain"
+set xlabel "Frequency [Hz]"
+set ylabel "Arbitrary Units [Arb]"
+plot "2sineXHz_freq_domain.dat" using 2:1 with lines
+
+set term wxt 1
+set xrange [0:20]
+set yrange [0:15]
+set title "DFFT of 2 sine waves"
+set xlabel "Frequency [Hz"
+set ylabel "Amplitude [Arb]"
+#plot "2sineXHz_freq_domain.dat" using 2:1 with lines
+

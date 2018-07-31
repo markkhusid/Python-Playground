@@ -1,0 +1,7 @@
+set term wxt 0
+set xrange [0:0.5]
+set yrange [-20:20]
+set title "50Hz Sine Wave"
+set xlabel "Time [s]"
+set ylabel "Amplitude [Arb]"
+plot "sine50Hz_time_domain.dat" using 2:1 with lines

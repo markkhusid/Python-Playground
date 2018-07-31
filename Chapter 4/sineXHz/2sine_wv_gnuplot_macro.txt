@@ -1,10 +1,10 @@
 set term wxt 0
-set xrange [0:5000]
-set yrange [0:50000]
+set xrange [20:120]
+set yrange [0:12]
 set title "DFFT Magnitude of 2 Sine Waves"
 set xlabel "Frequency [Hz]"
 set ylabel "Arbitrary Units [Arb]"
-plot "DFFT_mag_2sine.dat" using 0:1 with lines
+plot "DFFT_mag_2sine.dat" using 2:1 with lines
 
 set term wxt 1
 set xrange [0:500]

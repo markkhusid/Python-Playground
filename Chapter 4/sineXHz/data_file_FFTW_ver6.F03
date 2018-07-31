@@ -7,6 +7,8 @@
 ! Cleaned up indentation and formatting.
 ! Modified the write_DFFT_to_file subroutine to output not only the DFFT data element but also the corrected frequency
 ! on each line of the data file.  The DFFT data element and corrected frequency are separated by a space
+! Obtained the corrected frequency based on the sampe rate and the next power of two of the total number of samples (i.e. 100 samples -> next power of 2 = 128.)
+! Since there are num_bins_int number of data elements in FFT array, and the FFT array is symmetric, we divide the magnitude by half the num_bins_int to get the normalized magnitude.
 !
 ! Version 5
 ! Commented out debug code and rearranged some inconsequential lines.
@@ -42,19 +44,19 @@ module MKDynamics_FFT
     complex(C_DOUBLE_COMPLEX), dimension(:), allocatable	:: out
     
     ! Holds the data read from the input file
-    real(C_DOUBLE), dimension(:), allocatable   			:: temp_real_array
+    real(C_DOUBLE), dimension(:), allocatable   			                :: temp_real_array
     
     ! Used to perform complex math
-    real(C_DOUBLE)                                          :: magnitude, phase, temp_real
+    real(C_DOUBLE)                                                                      :: magnitude, phase, temp_real
     
     ! For checking if EOF reached
-    integer                                                 :: EOF_marker
+    integer                                                                             :: EOF_marker
     
     ! For checking if files opened successfully
-    integer                                     			:: file_good1, file_good2, file_good3
+    integer                                     			                :: file_good1, file_good2, file_good3
     
     ! For checking if files written successfully
-    integer                                                 :: good_write1, good_write2			
+    integer                                                                             :: good_write1, good_write2			
     
     ! Counter used to traverse arrays
     integer                     							:: i
@@ -303,8 +305,8 @@ module MKDynamics_FFT
             read (1, '(f30.20)', IOSTAT = EOF_marker) temp_real_array(i)		! read data element from file
             ! Debug code starts here
             !write (*, '(a, i4)'), 'The EOF marker is ->', EOF_marker
-            !write (*, '(a, i4)'), 'The counter is ->', i
-            !write (*, '(a, 30f30.20)'), 'The data element was -> ', temp_real_array(i)
+            !write (*, '(a, i4)') 'The counter is ->', i
+            !write (*, '(a, 30f30.20)') 'The data element was -> ', temp_real_array(i)
             !print *
             !print *
             ! Debug code ends here
@@ -313,8 +315,8 @@ module MKDynamics_FFT
         print *, 'Padding remainder of array with zeros to fill up to size of next power of 2....'
         do i=num_bins_int+1, num_bins_int_pow2
             temp_real_array(i) = 0.0
-            !write (*, '(a, i4)'), 'The counter is ->', i
-            !write (*, '(a, 30f30.20)'), 'The data element was -> ', temp_real_array(i)
+            !write (*, '(a, i4)') 'The counter is ->', i
+            !write (*, '(a, 30f30.20)') 'The data element was -> ', temp_real_array(i)
         end do
 	
         print *, 'Exiting read_from_file_into_array procedure'
@@ -352,10 +354,10 @@ module MKDynamics_FFT
         
 
         ! Debug code starts here
-    ! 	print *, "The contents of the output array is ->"
-    ! 	do i = 1,num_bins_int_pow2			 
-    ! 	  write (*, '(f30.20, f30.20)'), out(i)
-    ! 	end do
+    	print *, "The contents of the output array is ->"
+!     	do i = 1,num_bins_int_pow2			 
+!     	  write (*, '(f30.20, f30.20)') out(i)
+!     	end do
         ! Debug code ends here
         print *, 'Exiting compute_DFFT procedure'
         print *
@@ -380,6 +382,7 @@ module MKDynamics_FFT
         ! in two columns, separated by a space, i.e. DFFT_magnitude corrected_frequency, on each line in the output file.
         !do i = 1, 100
         do i = 1,(num_bins_int_pow2/2)
+        !do i = 1, (num_bins_int/2)
 
             ! Lines below for debug
             !write (*, '(a, i4)'), 'The counter i is ->', i
@@ -393,12 +396,16 @@ module MKDynamics_FFT
             imag_float = aimag(out(i))
             !write (*, '(a, f30.20)'), 'The value of imag_float is ->', imag_float
             
-            ! Obtain the corrected frequency based on the sampe rate and the total number of samples
-            corrected_frequency = float(i) * (float(sample_rate)/float(num_samples))
+            ! Obtain the corrected frequency based on the sampe rate and the next power of two of the total number of samples (i.e. 100 samples -> next power of 2 = 128.)
+            !corrected_frequency = floor(float(i) * (float(sample_rate)/float(num_bins_int_pow2)))
+            corrected_frequency = (float(i) * (float(sample_rate)/float(num_bins_int_pow2)))
             
-            magnitude = sqrt((real_float**2) + (imag_float**2))
+            ! Since there are num_bins_int number of data elements in FFT array, and the FFT array is symmetric, we divide the magnitude by half the num_bins_int to get the normalized magnitude.
+            magnitude = (sqrt((real_float**2) + (imag_float**2)))/float(num_bins_int/2)
+            
             phase = (atan2(imag_float,real_float))*(180/pi)
-            !write (*, '(a, f30.20)'), 'The magnitude is -> ', magnitude
+            !write (*, '(a, i8, a, f30.20, a, f30.5)') 'Counter -> ', i, &
+            !' Magnitude -> ', magnitude, ' Frequency -> ', corrected_frequency
             !write (*, '(a, f30.20)'), 'The phase is -> ', phase
             
             !print *
@@ -474,7 +481,7 @@ program module_test
   use MKDynamics_FFT
   implicit none
   
-  print *, 'MKDyanmics_FFT Program Version 5.'
+  print *, 'MKDyanmics_FFT Program Version 6.'
 
   call get_args
   call open_files
